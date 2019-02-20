@@ -11,14 +11,14 @@ def change_audio_rate(dir_path, speed_rate=2):
     prefix = '{}'.format(speed_rate)
     if os.path.exists(dir_path):
         folder = dir_path.split('/')[-1]
-        new_dir_path = '/'.join(dir_path.split('/')[:-1]) + '/' + prefix + '*' + folder
+        new_dir_path = '/'.join(dir_path.split('/')[:-1]) + '/' + prefix + '_r_' + folder
         os.mkdir(new_dir_path)
         l = list(os.listdir(dir_path))
         l.sort()
         for f in l: # f -> file
             fpath = dir_path + '/' + f
             fname = '_'.join(f.split('.')[:-1])
-            new_fpath = new_dir_path + '/' + fname + '*' + prefix + '.mp3'
+            new_fpath = new_dir_path + '/' + fname + '_r_' + prefix + '.mp3'
             '''
             if not os.path.exists(new_fpath):
                 open(new_fpath, 'a').close()
@@ -38,7 +38,7 @@ def change_audio_rate(dir_path, speed_rate=2):
 
 
 def video_to_audio_and_change_rate(dir_path, speed_rate=2):
-    prefix = '*{}*{}'.format('ToA', speed_rate)
+    prefix = '_r_{}_r_{}'.format('ToA', speed_rate)
     if os.path.exists(dir_path):
         folder = dir_path.split('/')[-1]
         new_dir_path = '/'.join(dir_path.split('/')[:-1]) + '/' + folder + prefix
@@ -68,7 +68,7 @@ def video_to_audio_and_change_rate(dir_path, speed_rate=2):
 
 
 def video_to_audio(dir_path):
-    prefix = '{}*'.format('ToAudio')
+    prefix = '{}_r_'.format('ToAudio')
     if os.path.exists(dir_path):
         folder = dir_path.split('/')[-1]
         new_dir_path = '/'.join(dir_path.split('/')[:-1]) + '/' + prefix + folder
