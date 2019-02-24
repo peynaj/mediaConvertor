@@ -1,5 +1,6 @@
 import os
 import argparse
+from mutagen.mp3 import MP3
 
 conv = [
     " ",
@@ -66,7 +67,6 @@ def video_to_audio_and_change_rate(dir_path, speed_rate=2):
             print('# {} -> finished!'.format(new_fpath))
 
 
-
 def video_to_audio(dir_path):
     prefix = '{}_r_'.format('ToAudio')
     if os.path.exists(dir_path):
@@ -94,4 +94,18 @@ def video_to_audio(dir_path):
             os.system(comm)
             print('# {} -> finished!'.format(new_fpath))
 
+def get_files(bp):
+    files = []
+    for d in os.listdir(bp):
+        if os.path.isfile(os.path.join(bp,d)):
+            files.append(os.path.join(bp,d))
+        elif os.path.isdir(os.path.join(bp,d)):
+            _files = get_files(os.path.join(bp,d))
+            files.extend(_files)
+    return files
+
+def get_audio_details(p):
+    l = get_files(p)
+    d = {i: MP3(i).info.length/60 for i in l}
+    return d
 
