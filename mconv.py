@@ -106,6 +106,12 @@ def get_files(bp):
 
 def get_audio_details(p):
     l = get_files(p)
-    d = {i: MP3(i).info.length/60 for i in l}
+    #d = {i: MP3(i).info.length/60 for i in l if (i.split('.'))[-1]=='mp3'}
+    d = {}
+    for i in l:
+        try:
+            d[i] = MP3(i).info.length/60
+        except Exception as ex:
+            print(i, ':\n', ex)
     return d
 
