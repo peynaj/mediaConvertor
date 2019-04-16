@@ -2,11 +2,7 @@ import os
 import argparse
 from mutagen.mp3 import MP3
 
-conv = [
-    " ",
-    "(",
-    ")",
-]
+conv = list(" ()|[]")
 
 def change_audio_rate(dir_path, speed_rate=2):
     prefix = '{}'.format(speed_rate)
