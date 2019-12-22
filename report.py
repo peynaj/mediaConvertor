@@ -16,7 +16,7 @@ r.append(f'* Sum: {sum(details.values())/60} h')
 r.append('=' * 40)
 
 for k, v in details.items():
-    r.append(f'{k[len(path):]} => {v/60:.5f}')
+    r.append(f'{k[len(path):]} => {v:.5f}')
 
 r.append('=' * 40)
 
