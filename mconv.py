@@ -98,10 +98,10 @@ def video_to_audio(dir_path):
 def get_files(bp):
     files = []
     for d in os.listdir(bp):
-        if os.path.isfile(os.path.join(bp,d)):
-            files.append(os.path.join(bp,d))
-        elif os.path.isdir(os.path.join(bp,d)):
-            _files = get_files(os.path.join(bp,d))
+        if os.path.isfile(os.path.join(bp, d)):
+            files.append(os.path.join(bp, d))
+        elif os.path.isdir(os.path.join(bp, d)):
+            _files = get_files(os.path.join(bp, d))
             files.extend(_files)
     return files
 
