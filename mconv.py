@@ -6,7 +6,7 @@ conv = list(" ()|[]")
 
 
 def change_audio_rate(dir_path, speed_rate=2):
-    prefix = '{}'.format(speed_rate)
+    prefix = 'rt{}'.format(speed_rate)
     if os.path.exists(dir_path):
         folder = dir_path.split('/')[-1]
         new_dir_path = '/'.join(dir_path.split('/')[:-1]) + '/' + prefix + '.' + folder

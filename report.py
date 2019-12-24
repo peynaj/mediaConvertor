@@ -12,7 +12,7 @@ details = mconv.get_audio_details(path)
 r = ['=' * 15 + ' REPORT ' + '=' * 15]
 r.append(f'* Path: {path}')
 r.append(f'* Length: {len(details)}')
-r.append(f'* Sum: {sum(details.values())/60} h')
+r.append(f'* Sum: {sum(details.values())/60:.2f} h')
 r.append('=' * 40)
 
 for k, v in details.items():
