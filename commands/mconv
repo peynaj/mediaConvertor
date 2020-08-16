@@ -1,0 +1,8 @@
+#!/usr/bin/env python3
+
+from commands import mconv
+
+
+if __name__ == '__main__':
+    mconv.main()
+
