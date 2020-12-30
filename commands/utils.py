@@ -132,7 +132,7 @@ def printable_report(path):
 
     for k, v in items:
         name = k[len(path) + 1:]
-        r.append(f'/{name} => {v:.3f}')
+        r.append(f'./{name} => {v:.3f}')
 
         folder = '/'.join(name.split('/')[:-1]) or '.'
         if folder not in folders_detail:

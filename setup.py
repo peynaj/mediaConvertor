@@ -9,7 +9,7 @@ os.chdir(os.path.normpath(os.path.join(os.path.abspath(__file__), os.pardir)))
 
 setup(
     name='mconv',
-    version='1.0..0',
+    version='1.0.1',
     description='A convert system for playing speed of audio and video files by ffmpeg',
     long_description=README,
     author='Peyman Najafi',
