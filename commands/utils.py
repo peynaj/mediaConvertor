@@ -124,7 +124,7 @@ def printable_report(path):
     r = []
     r.append('{x} REPORT {x}'.format(x='=' * 25))
     r.append(f'* Path: {path}')
-    r.append('=' * 58)
+    r.append('=' * 60)
 
     items = list(details.items())
     items.sort(key=lambda x: x[0])
@@ -143,23 +143,60 @@ def printable_report(path):
 
     r.append('')
 
-    report_base = ' {folder:{filler}<{fn}} {separator} {cnt:{filler}^{cn}} {separator} {dur:{filler}^{dn}}'
-    n = dict(fn=max(len(max(folders_detail.keys(), key=lambda x: len(x))), 8) + 2, cn=8, dn=10)
+    report_base = ' {folder:{filler}<{fn}} {separator} {cnt:{filler}^{cn}} {separator} {dur:{filler}^{dn}} {separator} {avg:{filler}^{an}}'
+    n = dict(fn=max(len(max(folders_detail.keys(), key=lambda x: len(x))), 8) + 2, cn=8, dn=10, an=11)
 
-    r.append(report_base.format(folder='', cnt='', dur='', filler='-', separator='-', **n))
-    r.append(report_base.format(folder='Folder', cnt='Count', dur='Dur(h)', filler=' ', separator='|', **n))
-    r.append(report_base.format(folder='', cnt='', dur='', filler='-', separator='+', **n))
+    separator_line = Colors.ENDC + ' ' + report_base.format(folder='', cnt='', dur='', avg='', filler='-', separator='+', **n)
+
+    r.append(separator_line)
+    r.append(Colors.BOLD + ' ' + report_base.format(folder='Folder', cnt='Count', dur='Dur(h)', avg='Avg(m)', filler=' ', separator='|', **n))
+    r.append(separator_line)
 
     all_dur = 0
+    all_cnt = 0
+    folders_colors = [Colors.OKBLUE, Colors.OKGREEN]
+    i = 0
     for folder, detail in sorted(folders_detail.items()):
+        cnt = detail.get('cnt', 0)
         dur = detail['dur'] / 60
+        avg = (dur * 60 / cnt) if cnt else 0
         all_dur += dur
-        r.append(report_base.format(folder=folder, cnt=detail['cnt'], dur=f'{dur:.3f}', filler=' ', separator='|', **n))
+        all_cnt += cnt
+        color = folders_colors[i % len(folders_colors)]
+        r.append(color + ' ' + report_base.format(folder=folder, cnt=cnt, dur=f'{dur:.3f}', avg=f'{avg:.3f}', filler=' ', separator='|', **n))
+        i += 1
 
-    r.append(report_base.format(folder='', cnt='', dur='', filler='-', separator='+', **n))
-    r.append(report_base.format(folder='All', cnt=len(details), dur=f'{all_dur:.3f}', filler=' ', separator='|', **n))
-    r.append(report_base.format(folder='', cnt='', dur='', filler='-', separator='-', **n))
+    r.append(separator_line)
+
+    all_avg = (all_dur * 60 / all_cnt) if all_cnt else 0
+    r.append(Colors.BOLD + ' ' + report_base.format(folder='All', cnt=all_cnt, dur=f'{all_dur:.3f}', avg=f'{all_avg:.3f}', filler=' ', separator='|', **n))
+
+    r.append(separator_line)
 
     result = '\n'.join(r)
 
     return result
+
+
+COLORS = dict(
+    HEADER='\033[95m',
+    OKBLUE='\033[94m',
+    OKCYAN='\033[96m',
+    OKGREEN='\033[92m',
+    WARNING='\033[93m',
+    FAIL='\033[91m',
+    ENDC='\033[0m',
+    BOLD='\033[1m',
+    UNDERLINE='\033[4m'
+)
+
+class Colors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
