@@ -178,6 +178,78 @@ def printable_report(path):
     return result
 
 
+def mix_podcast_files(src_path, prefix):
+    if not os.path.exists(src_path):
+        print(f"Path not found: {src_path}")
+        return
+    all_directories = [path for path in os.listdir(src_path) if os.path.isdir(os.path.join(src_path, path))]
+    all_podcast_directories = [_dir for _dir in all_directories if _dir.startswith(prefix)]
+    all_podcast_directories.sort()
+    podcast_dir_to_files = dict()
+    print("* Podcast Directories:")
+    min_dir_file_count = 10**10
+    for _dir in all_podcast_directories:
+        path = os.path.join(src_path, _dir)
+        files = os.listdir(path)
+        files.sort()
+        podcast_dir_to_files[_dir] = files
+        count = len(files)
+        min_dir_file_count = min(count, min_dir_file_count)
+        print(f"* {count:02d} > {_dir}")
+        if count == 0:
+            do_rm_dir = input(f"### Remove empty directory: [{path}] [Y/n]? ")
+            if do_rm_dir.lower() == "y":
+                os.system(f"rm -rf {path}")
+
+    # print(podcast_dir_to_files)
+    # return
+
+    if min_dir_file_count == 0:
+        print(f"Minimum of directories file count is 0.\nFinished!")
+        return
+    loop_count = input(f"Enter loop count:\n[Default is {min_dir_file_count}. Enter blank to continue with {min_dir_file_count}]\n")
+    if loop_count and not loop_count.isalnum():
+        print("Invalid number!")
+        return
+    if not loop_count:
+        loop_count = min_dir_file_count
+    else:
+        loop_count = min(min_dir_file_count, int(loop_count))
+
+    # === Move files ===
+    dest_path = os.path.join(src_path, "0.2.pod.mix")
+    if not os.path.exists(dest_path):
+        os.system(f"mkdir {dest_path}")
+    print(f"* Dest path: {dest_path}")
+    last_index = 0
+    for file in os.listdir(dest_path):
+        file_name_parts = file.split(".")
+        index = file_name_parts[0]
+        if index.isalnum():
+            last_index = max(last_index, int(index))
+    last_index = last_index % 100
+    print(f"* Last Index: {last_index}")
+    for _ in range(loop_count):
+        for _dir in all_podcast_directories:
+            files = podcast_dir_to_files[_dir]
+            if not files:
+                print(f"Directory is empty: {_dir}\nFinished!")
+                return
+            last_index += 1
+            file = files[0]
+            podcast_dir_to_files[_dir] = files[1:]
+            file_name_parts = file.split(".")
+            file_name_base = ".".join(file_name_parts[:-1])
+            file_name_extension = file_name_parts[-1]
+            file_src_path = os.path.join(src_path, _dir, file)
+            file_dest_path = os.path.join(dest_path, f"{last_index:02d}.{file_name_base}.{_dir[len(prefix):]}.{file_name_extension}")
+            command = f"mv {file_src_path} {file_dest_path}"
+            print(f"> {command}")
+            os.system(command)
+    print("Finished!")
+    return
+
+
 COLORS = dict(
     HEADER='\033[95m',
     OKBLUE='\033[94m',

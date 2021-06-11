@@ -1,10 +1,10 @@
 import os
 import sys
-from .utils import printable_report, change_audio_rate, video_to_audio_and_change_rate
-
+from .utils import printable_report, change_audio_rate, video_to_audio_and_change_rate, mix_podcast_files
 
 report = 'report'
 convert = 'convert'
+mixpod = 'mixpod'
 
 
 def mconv_help():
@@ -12,6 +12,7 @@ def mconv_help():
 =====
 mconv {report} [/path/to/directory (default:cwd)]
 mconv {convert} [to=v/a (video/audio) (default=a)] [rate=2] [/path/to/directory (default:cwd)]
+mconv {mixpod} [/path/to/directory (default:cwd)] [prefix of podcast directories default:2.]
 ====='''
     print(hlp)
     return
@@ -65,6 +66,14 @@ def main():
             elif to_ == 'v':
                 video_to_audio_and_change_rate(path, rate)
 
+        elif command == mixpod:
+            path = os.getcwd()
+            prefix = '2.'
+            if len(sys.argv) > 2:
+                path = sys.argv[2]
+            if len(sys.argv) > 3:
+                prefix = sys.argv[3]
+            mix_podcast_files(path, prefix)
         else:
             print(f'Invalid command: {command}')
             mconv_help()
