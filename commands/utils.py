@@ -194,15 +194,16 @@ def mix_podcast_files(src_path, prefix):
         files.sort()
         podcast_dir_to_files[_dir] = files
         count = len(files)
-        min_dir_file_count = min(count, min_dir_file_count)
+        if count > 0:
+            min_dir_file_count = min(count, min_dir_file_count)
         print(f"* {count:02d} > {_dir}")
         if count == 0:
             do_rm_dir = input(f"### Remove empty directory: [{path}] [Y/n]? ")
             if do_rm_dir.lower() == "y":
                 os.system(f"rm -rf {path}")
 
-    # print(podcast_dir_to_files)
-    # return
+    if min_dir_file_count == 10**10:
+        min_dir_file_count = 0
 
     if min_dir_file_count == 0:
         print(f"Minimum of directories file count is 0.\nFinished!")
@@ -227,7 +228,7 @@ def mix_podcast_files(src_path, prefix):
         index = file_name_parts[0]
         if index.isalnum():
             last_index = max(last_index, int(index))
-    last_index = last_index % 100
+
     print(f"* Last Index: {last_index}")
     for _ in range(loop_count):
         for _dir in all_podcast_directories:
