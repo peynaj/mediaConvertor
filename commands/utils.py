@@ -5,7 +5,7 @@ conv = list(" ()|[]")
 
 
 def change_audio_rate(dir_path, speed_rate=2):
-    prefix = 'rt{}'.format(speed_rate)
+    prefix = '{}'.format(speed_rate)
     if os.path.exists(dir_path):
         folder = dir_path.split('/')[-1]
         new_dir_path = '/'.join(dir_path.split('/')[:-1]) + '/' + prefix + '.' + folder
@@ -143,13 +143,21 @@ def printable_report(path):
 
     r.append('')
 
-    report_base = ' {folder:{filler}<{fn}} {separator} {cnt:{filler}^{cn}} {separator} {dur:{filler}^{dn}} {separator} {avg:{filler}^{an}}'
+    report_base = ' {folder:{filler}<{fn}} {separator} ' \
+                  '{cnt:{filler}^{cn}} {separator} ' \
+                  '{dur:{filler}^{dn}} {separator} ' \
+                  '{avg:{filler}^{an}}'
     n = dict(fn=max(len(max(folders_detail.keys(), key=lambda x: len(x))), 8) + 2, cn=8, dn=10, an=11)
 
-    separator_line = Colors.ENDC + ' ' + report_base.format(folder='', cnt='', dur='', avg='', filler='-', separator='+', **n)
+    separator_line = Colors.ENDC + ' ' + \
+        report_base.format(folder='', cnt='', dur='', avg='', filler='-', separator='+', **n)
 
     r.append(separator_line)
-    r.append(Colors.BOLD + ' ' + report_base.format(folder='Folder', cnt='Count', dur='Dur(h)', avg='Avg(m)', filler=' ', separator='|', **n))
+    r.append(Colors.BOLD + ' ' +
+             report_base.format(
+                 folder='Folder', cnt='Count', dur='Dur(h)', avg='Avg(m)', filler=' ', separator='|', **n
+             )
+             )
     r.append(separator_line)
 
     all_dur = 0
@@ -163,13 +171,17 @@ def printable_report(path):
         all_dur += dur
         all_cnt += cnt
         color = folders_colors[i % len(folders_colors)]
-        r.append(color + ' ' + report_base.format(folder=folder, cnt=cnt, dur=f'{dur:.3f}', avg=f'{avg:.3f}', filler=' ', separator='|', **n))
+        r.append(color + ' ' + report_base.format(
+            folder=folder, cnt=cnt, dur=f'{dur:.3f}', avg=f'{avg:.3f}', filler=' ', separator='|', **n
+        ))
         i += 1
 
     r.append(separator_line)
 
     all_avg = (all_dur * 60 / all_cnt) if all_cnt else 0
-    r.append(Colors.BOLD + ' ' + report_base.format(folder='All', cnt=all_cnt, dur=f'{all_dur:.3f}', avg=f'{all_avg:.3f}', filler=' ', separator='|', **n))
+    r.append(Colors.BOLD + ' ' + report_base.format(
+        folder='All', cnt=all_cnt, dur=f'{all_dur:.3f}', avg=f'{all_avg:.3f}', filler=' ', separator='|', **n
+    ))
 
     r.append(separator_line)
 
@@ -194,21 +206,18 @@ def mix_podcast_files(src_path, prefix):
         files.sort()
         podcast_dir_to_files[_dir] = files
         count = len(files)
-        if count > 0:
-            min_dir_file_count = min(count, min_dir_file_count)
+        min_dir_file_count = min(count, min_dir_file_count)
         print(f"* {count:02d} > {_dir}")
         if count == 0:
-            do_rm_dir = input(f"### Remove empty directory: [{path}] [Y/n]? ")
+            do_rm_dir = input(f"### Remove empty directory: [{path}] [Y/n]? ") or "Y"
             if do_rm_dir.lower() == "y":
-                os.system(f"rm -rf {path}")
-
-    if min_dir_file_count == 10**10:
-        min_dir_file_count = 0
+                os.system(f'rm -rf "{path}"')
 
     if min_dir_file_count == 0:
         print(f"Minimum of directories file count is 0.\nFinished!")
         return
-    loop_count = input(f"Enter loop count:\n[Default is {min_dir_file_count}. Enter blank to continue with {min_dir_file_count}]\n")
+    loop_count = input(f"Enter loop count:\n[Default is {min_dir_file_count}."
+                       f" Enter blank to continue with {min_dir_file_count}]\n")
     if loop_count and not loop_count.isalnum():
         print("Invalid number!")
         return
@@ -243,8 +252,10 @@ def mix_podcast_files(src_path, prefix):
             file_name_base = ".".join(file_name_parts[:-1])
             file_name_extension = file_name_parts[-1]
             file_src_path = os.path.join(src_path, _dir, file)
-            file_dest_path = os.path.join(dest_path, f"{last_index:02d}.{file_name_base}.{_dir[len(prefix):]}.{file_name_extension}")
-            command = f"mv {file_src_path} {file_dest_path}"
+            file_dest_path = os.path.join(
+                dest_path, f"{last_index:02d}.{file_name_base}.{_dir[len(prefix):]}.{file_name_extension}"
+            )
+            command = f'mv "{file_src_path}" "{file_dest_path}"'
             print(f"> {command}")
             os.system(command)
     print("Finished!")
@@ -262,6 +273,7 @@ COLORS = dict(
     BOLD='\033[1m',
     UNDERLINE='\033[4m'
 )
+
 
 class Colors:
     HEADER = '\033[95m'
