@@ -253,7 +253,7 @@ def mix_podcast_files(src_path, prefix):
             file_name_extension = file_name_parts[-1]
             file_src_path = os.path.join(src_path, _dir, file)
             file_dest_path = os.path.join(
-                dest_path, f"{last_index:02d}.{file_name_base}.{_dir[len(prefix):]}.{file_name_extension}"
+                dest_path, f"{last_index:03d}.{file_name_base}.{_dir[len(prefix):]}.{file_name_extension}"
             )
             command = f'mv "{file_src_path}" "{file_dest_path}"'
             print(f"> {command}")
