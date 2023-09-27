@@ -5,33 +5,36 @@ conv = list(" ()|[]")
 
 
 def change_audio_rate(dir_path, speed_rate=2):
-    prefix = '{}'.format(speed_rate)
-    if os.path.exists(dir_path):
-        folder = dir_path.split('/')[-1]
-        new_dir_path = '/'.join(dir_path.split('/')[:-1]) + '/' + prefix + '.' + folder
-        os.mkdir(new_dir_path)
-        l = list(os.listdir(dir_path))
-        l.sort()
-        for f in l: # f -> file
-            fpath = dir_path + '/' + f
-            fname = '.'.join(f.split('.')[:-1])
-            new_fpath = new_dir_path + '/' + fname + '.' + prefix + '.mp3'
-            '''
-            if not os.path.exists(new_fpath):
-                open(new_fpath, 'a').close()
-            '''
-            for c in conv:
-                fpath = fpath.replace(c, f"\{c}")
-                new_fpath = new_fpath.replace(c, f"\{c}")
+    prefix = str(speed_rate)
+    if not os.path.exists(dir_path):
+        print(f'directory not exists: {dir_path}')
+        return
+    dir_items = list(os.listdir(dir_path))
+    dir_items.sort()
+    if all(map(lambda item: os.path.isdir(os.path.join(dir_path, item)), dir_items)):
+        for directory in dir_items:
+            change_audio_rate(os.path.join(dir_path, directory), speed_rate)
+        return
 
-            comm = 'ffmpeg -i {old_file} -filter:a "atempo={rate}" -vn {new_file} -y'.format(
-                old_file=fpath,
-                rate=speed_rate,
-                new_file=new_fpath,
-            )
-            print('\n=======================\n', comm, '\n==========================\n')
-            os.system(comm)
-            print('# {} -> finished!'.format(new_fpath))
+    folder = dir_path.split('/')[-1]
+    new_dir_path = '/'.join(dir_path.split('/')[:-1]) + '/' + prefix + '.' + folder
+    os.mkdir(new_dir_path)
+    for file in dir_items:
+        fpath = dir_path + '/' + file
+        fname = '.'.join(file.split('.')[:-1])
+        new_fpath = new_dir_path + '/' + fname + '.' + prefix + '.mp3'
+        for c in conv:
+            fpath = fpath.replace(c, f"\{c}")
+            new_fpath = new_fpath.replace(c, f"\{c}")
+
+        comm = 'ffmpeg -i {old_file} -filter:a "atempo={rate}" -vn {new_file} -y'.format(
+            old_file=fpath,
+            rate=speed_rate,
+            new_file=new_fpath,
+        )
+        print('\n=======================\n', comm, '\n==========================\n')
+        os.system(comm)
+        print('# {} -> finished!'.format(new_fpath))
 
 
 def video_to_audio_and_change_rate(dir_path, speed_rate=2):
